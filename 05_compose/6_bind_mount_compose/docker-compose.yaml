@@ -1,0 +1,31 @@
+version: '3.3'
+
+services:
+  db: #nome container
+    # image: mysqlcompose
+    build: ./mysql/ # Fazendo o build inves de gerar a imagem
+    restart: always
+    env_file:
+      - ./config/db.env
+    ports:
+      - "3306:3306"
+    networks:
+      - dockercompose
+    volumes:
+      - ./mysql/schema.sql:/docker-entrypoint-initdb.d/init.sql
+  
+  flask:
+    depends_on: 
+      - db
+    # image: flaskcompose
+    build: ./flask/ # Fazendo o build inves de gerar a imagem
+    ports:
+      - "5000:5000"
+    restart: always
+    volumes:
+      - /home/livia/livia/DOCKER-HORA-DE-CODAR/05_compose/6_bind_mount_compose/flask:/app
+    networks: 
+      - dockercompose
+
+networks:
+  dockercompose:
